@@ -1,3 +1,5 @@
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE UndecidableInstances #-}
 module Data.Aeson.IP () where
 
 import Data.Aeson
@@ -31,6 +33,15 @@ instance FromJSON IP where
     parseJSON v = typeMismatch "IP" v
 
 instance ToJSON IP where
+    toJSON = String . Text.pack . show
+
+instance Read (AddrRange a) => FromJSON (AddrRange a) where
+    parseJSON (String s)
+        | Just r <- readMaybe (Text.unpack s) = pure r
+        | otherwise = fail "Unable to parse"
+    parseJSON v = typeMismatch "AddrRange" v
+
+instance Show (AddrRange a) => ToJSON (AddrRange a) where
     toJSON = String . Text.pack . show
 
 instance FromJSON IPRange where
