@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                aeson-iproute
-version:             0.1.0.0
+version:             0.1.1
 synopsis:            Aeson instances for iproute types
 license:             BSD3
 license-file:        LICENSE

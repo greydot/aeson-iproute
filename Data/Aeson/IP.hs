@@ -1,6 +1,11 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE UndecidableInstances #-}
 module Data.Aeson.IP () where
+
+#if __GLASGOW_HASKELL__ <= 708
+import Control.Applicative (pure)
+#endif
 
 import Data.Aeson
 import Data.Aeson.Types
