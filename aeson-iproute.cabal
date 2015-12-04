@@ -4,6 +4,7 @@
 name:                aeson-iproute
 version:             0.1.1
 synopsis:            Aeson instances for iproute types
+description:         Aeson instances for iproute types
 license:             BSD3
 license-file:        LICENSE
 author:              Lana Black
@@ -23,3 +24,7 @@ library
                         
   default-language:    Haskell2010
   ghc-options:         -Wall -fno-warn-orphans
+
+source-repository head
+  type: git
+  location: https://github.com/greydot/aeson-iproute.git
