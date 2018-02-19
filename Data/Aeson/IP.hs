@@ -25,6 +25,10 @@ instance FromJSONKey IPv4 where
                           Just r -> pure r
                           Nothing -> fail "Unable to parse IPv4"
 
+-- | The @ToJSON@ instance produces JSON strings matching the @Show@ instance.
+-- 
+-- >>> toJSON (toIPv4 [127,0,0,1])
+-- String "127.0.0.1"
 instance ToJSON IPv4 where
     toJSON = String . Text.pack . show
 
@@ -43,6 +47,10 @@ instance FromJSONKey IPv6 where
                           Just r -> pure r
                           Nothing -> fail "Unable to parse IPv6"
 
+-- | The @ToJSON@ instance produces JSON strings matching the @Show@ instance.
+-- 
+-- >>> toJSON (toIPv6 [0x2001,0xDB8,0,0,0,0,0,1])
+-- String "2001:db8::1"
 instance ToJSON IPv6 where
     toJSON = String . Text.pack . show
 
