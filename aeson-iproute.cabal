@@ -4,7 +4,7 @@
 name:                aeson-iproute
 version:             0.1.1
 synopsis:            Aeson instances for iproute types
-description:         Aeson instances for iproute types
+description:         Aeson instances for iproute types.
 license:             BSD3
 license-file:        LICENSE
 author:              Lana Black
@@ -13,6 +13,7 @@ homepage:            https://github.com/greydot/aeson-iproute
 category:            Data
 build-type:          Simple
 cabal-version:       >=1.10
+Tested-With: GHC == 7.10.3, GHC == 8.0.2, GHC == 8.2.2
 
 library
   exposed-modules:     Data.Aeson.IP
