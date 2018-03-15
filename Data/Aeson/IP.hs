@@ -7,11 +7,15 @@ module Data.Aeson.IP () where
 import Control.Applicative (pure)
 #endif
 
-import Data.Aeson
-import Data.Aeson.Types
-import Data.IP
+import           Data.Aeson
+import           Data.Aeson.Types
+import           Data.Aeson.Internal
+import qualified Data.HashMap.Strict as HashMap
+import           Data.IP
+import           Data.IP.RouteTable (Routable, IPRTable)
+import qualified Data.IP.RouteTable as RouteTable
 import qualified Data.Text as Text
-import Text.Read (readMaybe)
+import           Text.Read (readMaybe)
 
 instance FromJSON IPv4 where
     parseJSON (String s)
@@ -110,3 +114,33 @@ instance FromJSONKey IPRange where
 
 instance ToJSONKey IPRange where
     toJSONKey = toJSONKeyText (Text.pack . show)
+
+instance ( FromJSONKey k
+         , Read (AddrRange k)
+         , Routable k
+         ) => FromJSON1 (IPRTable k) where
+    liftParseJSON p _ = case fromJSONKey of
+        FromJSONKeyTextParser f -> withObject "IPRTable k v" $
+            HashMap.foldrWithKey
+                (\k v rt -> RouteTable.insert <$> f k <?> Key k
+                                              <*> p v <?> Key k
+                                              <*> rt)
+                (pure RouteTable.empty)
+        _ -> fail "using IPRTable in this context is not yet supported"
+
+instance ( FromJSONKey k
+         , Read (AddrRange k)
+         , Routable k
+         , FromJSON v
+         ) => FromJSON (IPRTable k v) where
+    parseJSON = parseJSON1
+
+instance (Routable k, Show k, ToJSON k) => ToJSON1 (IPRTable k) where
+    liftToJSON g _ = case toJSONKey of
+        ToJSONKeyText f _ -> Object . HashMap.fromList
+                                    . map (\(k, v) -> (f k, g v))
+                                    . RouteTable.toList
+        _ -> fail "using IPRTable as a JSON key is not yet supported"
+
+instance (Routable k, Show k, ToJSON k, ToJSON v) => ToJSON (IPRTable k v) where
+    toJSON = toJSON1
