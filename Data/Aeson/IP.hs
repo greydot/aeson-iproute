@@ -30,7 +30,7 @@ instance FromJSONKey IPv4 where
                           Nothing -> fail "Unable to parse IPv4"
 
 -- | The @ToJSON@ instance produces JSON strings matching the @Show@ instance.
--- 
+--
 -- >>> toJSON (toIPv4 [127,0,0,1])
 -- String "127.0.0.1"
 instance ToJSON IPv4 where
@@ -52,7 +52,7 @@ instance FromJSONKey IPv6 where
                           Nothing -> fail "Unable to parse IPv6"
 
 -- | The @ToJSON@ instance produces JSON strings matching the @Show@ instance.
--- 
+--
 -- >>> toJSON (toIPv6 [0x2001,0xDB8,0,0,0,0,0,1])
 -- String "2001:db8::1"
 instance ToJSON IPv6 where
@@ -126,7 +126,7 @@ instance ( FromJSONKey k
                                               <*> p v <?> Key k
                                               <*> rt)
                 (pure RouteTable.empty)
-        _ -> fail "using IPRTable in this context is not yet supported"
+        _ -> \_ -> fail "using IPRTable in this context is not yet supported"
 
 instance ( FromJSONKey k
          , Read (AddrRange k)
@@ -140,7 +140,7 @@ instance (Routable k, Show k, ToJSON k) => ToJSON1 (IPRTable k) where
         ToJSONKeyText f _ -> Object . HashMap.fromList
                                     . map (\(k, v) -> (f k, g v))
                                     . RouteTable.toList
-        _ -> fail "using IPRTable as a JSON key is not yet supported"
+        _ -> error "using IPRTable as a JSON key is not yet supported"
 
 instance (Routable k, Show k, ToJSON k, ToJSON v) => ToJSON (IPRTable k v) where
     toJSON = toJSON1
