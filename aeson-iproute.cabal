@@ -17,7 +17,7 @@ Tested-With:         GHC == 8.10.7, GHC == 9.0.1
 
 library
   exposed-modules:     Data.Aeson.IP
-  build-depends:       aeson > 2.0,
+  build-depends:       aeson >= 2.0 && < 3.0,
                        base >=4 && <5,
                        iproute >= 1.7.3,
                        text >= 1.0
