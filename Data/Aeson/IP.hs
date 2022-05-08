@@ -1,16 +1,11 @@
-{-# LANGUAGE CPP #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE UndecidableInstances #-}
 module Data.Aeson.IP () where
 
-#if __GLASGOW_HASKELL__ <= 708
-import Control.Applicative (pure)
-#endif
-
 import           Data.Aeson
+import qualified Data.Aeson.Key as Key
+import qualified Data.Aeson.KeyMap as KeyMap
 import           Data.Aeson.Types
-import           Data.Aeson.Internal
-import qualified Data.HashMap.Strict as HashMap
 import           Data.IP
 import           Data.IP.RouteTable (Routable, IPRTable)
 import qualified Data.IP.RouteTable as RouteTable
@@ -121,8 +116,8 @@ instance ( FromJSONKey k
          ) => FromJSON1 (IPRTable k) where
     liftParseJSON p _ = case fromJSONKey of
         FromJSONKeyTextParser f -> withObject "IPRTable k v" $
-            HashMap.foldrWithKey
-                (\k v rt -> RouteTable.insert <$> f k <?> Key k
+            KeyMap.foldrWithKey
+                (\k v rt -> RouteTable.insert <$> f (Key.toText k) <?> Key k
                                               <*> p v <?> Key k
                                               <*> rt)
                 (pure RouteTable.empty)
@@ -137,7 +132,7 @@ instance ( FromJSONKey k
 
 instance (Routable k, Show k, ToJSON k) => ToJSON1 (IPRTable k) where
     liftToJSON g _ = case toJSONKey of
-        ToJSONKeyText f _ -> Object . HashMap.fromList
+        ToJSONKeyText f _ -> Object . KeyMap.fromList
                                     . map (\(k, v) -> (f k, g v))
                                     . RouteTable.toList
         _ -> error "using IPRTable as a JSON key is not yet supported"
