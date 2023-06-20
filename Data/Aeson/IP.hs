@@ -114,7 +114,7 @@ instance ( FromJSONKey k
          , Read (AddrRange k)
          , Routable k
          ) => FromJSON1 (IPRTable k) where
-    liftParseJSON p _ = case fromJSONKey of
+    liftParseJSON _ p _ = case fromJSONKey of
         FromJSONKeyTextParser f -> withObject "IPRTable k v" $
             KeyMap.foldrWithKey
                 (\k v rt -> RouteTable.insert <$> f (Key.toText k) <?> Key k
@@ -131,7 +131,7 @@ instance ( FromJSONKey k
     parseJSON = parseJSON1
 
 instance (Routable k, Show k, ToJSON k) => ToJSON1 (IPRTable k) where
-    liftToJSON g _ = case toJSONKey of
+    liftToJSON _ g _ = case toJSONKey of
         ToJSONKeyText f _ -> Object . KeyMap.fromList
                                     . map (\(k, v) -> (f k, g v))
                                     . RouteTable.toList
